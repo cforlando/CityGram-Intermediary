@@ -4,7 +4,7 @@
 ##-- interHandler.py
 ##-- Fetch data from a "near real time" JSON data source, format to
 ##-- be Citygram compliant, and print the list of JSON objects
-##-- 2016-02-02
+##-- 2016-04-16
 
 #Usage: python interHandler.py <service>
 #Currently supports the following services:
@@ -57,8 +57,8 @@ class service:
 	def setID(self , aString):
 		'''Set the object id to be equal to the SHA-1 hex value of a string'''
 		hasher = hashlib.sha1()
-		#Remove non-ascii chars
-		hasher.update(''.join(i for i in aString if ord(i)<128))
+		#Remove non-ascii chars for hash
+		hasher.update((''.join(i for i in aString if ord(i)<128)).encode('utf-8'))
 		self.id = hasher.hexdigest()
 	
 	def validate(self):
@@ -100,21 +100,16 @@ class policereport(service):
 	
 	def makeTitle(self):
 		ret = self.properties['reason'].capitalize()
-		ret += ' has occured at ' + self.properties['location']
-		ret += ' at ' + self.properties['when']
+		ret += ' has occured near ' + self.properties['address']
+		time = datetime.strptime(self.properties['when'], '%Y-%m-%dT%H:%M:%S')
+		ret += ' on ' + time.strftime('%Y-%m-%d at %I:%M%p')
 		return ret
 	def makeGeoJSON(self):
-		return {
-			'type': 'point',
-			'coordinates': {
-				'latitude': self.properties['location']['coordinates'][0],
-				'longitude': self.properties['location_1']['longitude']
-			}
-		}
+		return self.properties['location']
 
 def getTimeStamp(minAgo, strf):
 	'''Returns a strf formatted timestamp a given number of minutes prior to "now"'''
-	retTime =  datetime.now() - timedelta(minutes=minAgo)
+	retTime = datetime.now() - timedelta(minutes=minAgo)
 	return retTime.strftime(strf)
 
 #Associates each service with its object, required keys, and fetch URL
