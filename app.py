@@ -13,6 +13,7 @@
 import sys, json, hashlib
 from datetime import datetime, timedelta
 from requests import get
+from cgi import parse_qs
 
 class service:
     '''Service parent class definition'''
@@ -166,6 +167,5 @@ if __name__ == '__main__':
     #Else start the server
     else:
         from wsgiref.simple_server import make_server
-        from cgi import parse_qs
         httpd = make_server('localhost', 5555, wsgi_app)
         httpd.serve_forever()
