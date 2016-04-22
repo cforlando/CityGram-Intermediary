@@ -47,14 +47,6 @@ class service:
         hasher.update((''.join(i for i in aString if ord(i)<128)).encode('utf-8'))
         self.id = hasher.hexdigest()
     
-    def makeTitle(self):
-        '''Returns the message body. Must be implemented by child'''
-        pass
-    
-    def makeGeoJSON(self):
-        '''Returns a GeoJSON object. Must be implemented by child'''
-        pass
-    
     def validate(self):
         '''Returns True if object passes all validation tests'''
         try:
@@ -123,6 +115,7 @@ def main(service):
         #Create a list of service objects from JSON data source
         try: objects = json.loads(get(optionDict[service]['url']).text.strip())
         except: return '503 Service Unavailable', {'Error':'Data Fetch Error'}
+        print('Items to be converted:', len(objects))
         for item in objects:
             #Create new service object init'd with original object
             serv = optionDict[service]['obj'](item)
