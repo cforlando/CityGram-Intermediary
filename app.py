@@ -31,6 +31,12 @@ class service:
             elif self.properties[item] in ['','NULL']: return False
         return True
     
+    #Child classes have the option to filter objects.
+    #Filter fields should be included in requiredKeys
+    def filter(self):
+        '''Reutrns True if an object is to be included in the features list'''
+        return True
+    
     #The next two require child-specific implementation
     def makeTitle(self):
         '''Returns a string fully describing the alert/event'''
@@ -81,9 +87,13 @@ class service:
 
 ##--Child class definitions must implement makeTitle() and makeGeoJSON()
 
+opdReasonFilter = json.load(open('data/opdreasons.json', 'r'))
 class policereport(service):
     '''Orlando Police dispatch report feed'''
-    
+    def filter(self):
+        if self.properties['reason'] in opdReasonFilter:
+            return False
+        return True
     def makeTitle(self):
         ret = self.properties['reason'].capitalize()
         ret += ' has occured near ' + self.properties['address']
@@ -104,7 +114,7 @@ optionDict = {
         'obj': policereport,
         'reqKeys': ['address', 'location', 'when', 'reason'],
         'url': ('http://brigades.opendatanetwork.com/resource/sm4t-sjt5.json?'
-                '$where=when > "{}"'.format(getTimeStamp(600, '%Y-%m-%dT%H:%M:%d')))
+                '$where=when > "{}"'.format(getTimeStamp(60, '%Y-%m-%dT%H:%M:%d')))
     }
 }
 
@@ -120,7 +130,8 @@ def main(service):
             #Create new service object init'd with original object
             serv = optionDict[service]['obj'](item)
             #If original object contains all the required keys and their values are not null
-            if serv.checkForKeys(optionDict[service]['reqKeys']):
+            #And the data passes the service's filter
+            if serv.checkForKeys(optionDict[service]['reqKeys']) and serv.filter():
                 #If the new object updates and passes validation
                 if serv.update():
                     #Append new object to featureList
