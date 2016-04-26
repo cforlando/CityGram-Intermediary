@@ -96,9 +96,9 @@ class policereport(service):
         return True
     def makeTitle(self):
         ret = self.properties['reason'].capitalize()
-        ret += ' has occured near ' + self.properties['address']
+        ret += ' has been reported near ' + self.properties['address'].split(',')[0]
         time = datetime.strptime(self.properties['when'], '%Y-%m-%dT%H:%M:%S')
-        ret += ' on ' + time.strftime('%Y-%m-%d at %I:%M%p')
+        ret += ' on ' + time.strftime('%m/%d at %I:%M%p')
         return ret
     def makeGeoJSON(self):
         return self.properties['location']
@@ -125,17 +125,21 @@ def main(service):
         #Create a list of service objects from JSON data source
         try: objects = json.loads(get(optionDict[service]['url']).text.strip())
         except: return '503 Service Unavailable', {'Error':'Data Fetch Error'}
-        print('Items to be converted:', len(objects))
+        print('Number of unfiltered items to be converted:', len(objects))
         for item in objects:
-            #Create new service object init'd with original object
-            serv = optionDict[service]['obj'](item)
-            #If original object contains all the required keys and their values are not null
-            #And the data passes the service's filter
-            if serv.checkForKeys(optionDict[service]['reqKeys']) and serv.filter():
-                #If the new object updates and passes validation
-                if serv.update():
-                    #Append new object to featureList
-                    featureList.append(serv.export())
+            try:
+                #Create new service object init'd with original object
+                serv = optionDict[service]['obj'](item)
+                #If original object contains all the required keys and their values are not null
+                #And the data passes the service's filter
+                if serv.checkForKeys(optionDict[service]['reqKeys']) and serv.filter():
+                    #If the new object updates and passes validation
+                    if serv.update():
+                        #Append new object to featureList
+                        featureList.append(serv.export())
+            except Exception as e:
+                print('Item error:', e)
+        print('Number of items in the feature list:', len(featureList))
         #Output/print the entire collection
         return '200 OK', {'type': 'FeatureCollection' , 'features': featureList}
     #Else output/print error
