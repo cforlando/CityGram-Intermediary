@@ -98,7 +98,8 @@ class policereport(service):
         ret = self.properties['reason'].capitalize()
         ret += ' has been reported near ' + self.properties['address'].split(',')[0]
         time = datetime.strptime(self.properties['when'], '%Y-%m-%dT%H:%M:%S')
-        ret += ' on ' + time.strftime('%m/%d at %I:%M%p')
+        times = [time.strftime(i).lstrip('0') for i in ('%m', '%d', '%I:%M%p')]
+        ret += ' on {}/{} at {}'.format(times[0], times[1], times[2])
         return ret
     def makeGeoJSON(self):
         return self.properties['location']
