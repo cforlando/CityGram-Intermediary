@@ -115,7 +115,7 @@ optionDict = {
         'obj': policereport,
         'reqKeys': ['address', 'location', 'when', 'reason'],
         'url': ('http://brigades.opendatanetwork.com/resource/sm4t-sjt5.json?'
-                '$where=when > "{}"'.format(getTimeStamp(60, '%Y-%m-%dT%H:%M:%d')))
+                '$where=when > "{}"'.format(getTimeStamp(720, '%Y-%m-%dT%H:%M:%d')))
     }
 }
 
