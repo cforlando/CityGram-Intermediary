@@ -1,0 +1,73 @@
+# Gedit backups
+*~
+
+# PyDev project files
+.project
+.pydevproject
+
+# Compiled Python files
+*.py[cod]
+
+# Executable Windows Files
+*.exe
+
+# Database Files
+*.db
+
+# Eclipse Settings
+.settings/
+
+# Documents
+*.doc
+*.odt*
+
+# Cache
+.cache
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Complexity
+output/*.html
+output/*/index.html
+
+# Sphinx
+docs/_build
+
+.webassets-cache
+
+# Virtualenvs
+env
+env*
+venv
+venv*
+
