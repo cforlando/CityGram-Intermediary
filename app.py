@@ -1,14 +1,14 @@
 #!/usr/bin/python3
-
-##-- Michael duPont
-##-- Fetch data from a "near real time" JSON data source, format to
-##-- be Citygram compliant, and print the list of JSON objects
-##-- 2016-04-17
-
-#Usage: python3 app.py <service>
-#Web: url/?service=<service>
-#Currently supports the following services:
-#  police
+#
+#-- Michael duPont
+#-- Fetch data from a "near real time" JSON data source, format to
+#-- be Citygram compliant, and print the list of JSON objects
+#-- 2016-04-17
+#
+# Usage: python3 app.py <service>
+# Web: url/?service=<service>
+# Currently supports the following services:
+#   police
 
 import sys, json
 from requests import get
