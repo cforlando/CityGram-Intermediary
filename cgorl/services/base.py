@@ -2,16 +2,23 @@
 
 # stdlib
 import hashlib
+import json
+# library
+import requests
 
-class Service(object):
+class ServiceObject(object):
     """
-    Service base class
+    Base service object class
     """
 
-    tag: str = None
     id: str = None
     properties: dict = None
     geojson: dict = None
+
+    def __init__(self, data: dict):
+        self.properties = {}
+        self.geojson = {}
+        self.valid = self.process(data)
 
     def _make_title(self) -> str:
         """
@@ -24,16 +31,6 @@ class Service(object):
         Returns a Citygram-compliant geometry dictionary
         """
         raise NotImplementedError()
-
-    def _filter(self):
-        """
-        Child classes have the option to filter objects.
-
-        Filter fields should be included in required_keys
-
-        Returns True if an object is to be included in the features list
-        """
-        return True
 
     def set_id(self, title: str):
         """
@@ -55,15 +52,24 @@ class Service(object):
             assert isinstance(self.id, str)
             # The id has been changed and not empty
             assert bool(self.id)
-            # The geoLoc is a dict
+            # The geom is a dict
             assert isinstance(self.geojson, dict)
-            # The geoLoc has been changed
+            # The geom has been changed
             assert len(self.geojson) > 0
             return True
         except:
             return False
 
-    def _export(self) -> {str: object}:
+    def process(self, data: dict) -> bool:
+        """
+        Processes an object and returns True if the result passes validation
+        """
+        title = self._make_title()
+        self.properties['title']
+        self.set_id(title)
+        return self._validate()
+
+    def export(self) -> {str: object}:
         """
         Returns a Citygram-compliant, JSON-compatible dictionary of the original object
         """
@@ -74,14 +80,54 @@ class Service(object):
             'properties': self.properties
         }
 
-class PointService(Service):
+class PointObject(ServiceObject):
     """
     Services deriving from Point geometries
     """
     pass
 
-class PolygonService(Service):
+class PolygonObject(ServiceObject):
     """
     Services deriving from Polygon geometries
     """
     pass
+
+class Service(object):
+    """
+    Service base class
+    """
+
+    # Unique tag to identify the service URL
+    tag: str = None
+
+    # JSON data source. Can be a URL or file path
+    data_source: str = None
+
+    # Service object to parse raw data
+    service_obj: ServiceObject = None
+
+    def _filter(self, data: dict) -> bool:
+        """
+        Child classes have the option to filter objects
+
+        Returns True if an object is to be included in the features list
+        """
+        return True
+
+    def fetch(self) -> [dict]:
+        """
+        Retruns filtered data from a URL or file JSON data source
+
+        Child classes should implement their own if reading from a non-JSON source
+        """
+        if self.data_source.startswith('http'):
+            data = requests.get(self.data_source).json()
+        else:
+            data = json.load(open(self.data_source, 'r'))
+        return [item for item in data if self._filter(item)]
+
+    def format(self, data: [dict]) -> [dict]:
+        """
+        """
+        objs = [self.service_obj(item) for item in data]
+        return [obj.export() for obj in objs if obj.valid]
