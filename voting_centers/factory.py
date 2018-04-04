@@ -11,9 +11,9 @@ import begin
 import shapefile
 from dbfread import DBF
 
-@begin.start
-def main(input: 'Name of the files to be converted (dbf, shp)',
-         output: 'Name of the output GeoJSON file' = 'geometries'):
+@begin.subcommand
+def geoms(input: 'Name of the files to be converted (dbf, shp)',
+          output: 'Name of the output GeoJSON file' = 'geometries'):
     """
     Convert ArcGIS data files into a GeoJSON output
 
@@ -43,3 +43,20 @@ def main(input: 'Name of the files to be converted (dbf, shp)',
         'type': 'FeatureCollection',
         'features': features
     }, open(output + '.geojson', 'w'))
+
+@begin.subcommand
+def voting(centers: 'Voting centers file path',
+           dates: 'Election dates file path',
+           geoms: 'Geometry file path') -> int:
+    """
+    Generate master output from voter center, election date, and precinct geometries data files
+
+    The output is placed into a publically-callable place for Citygram to pull from like S3
+    """
+    centers, dates, geoms = [json.load(open(path)) for path in (centers, dates, geoms)]
+    print(dates)
+    return 0
+
+@begin.start
+def main():
+    pass
