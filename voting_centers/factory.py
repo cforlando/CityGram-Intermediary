@@ -1,7 +1,5 @@
 """
-geojson_factory.py - Convert ArcGIS data files into a GeoJSON output
-
-Ex: python geojson_factory.py precinct_files/May2016Precinct_region.shp
+factory.py - Command line utility for shaping voting center data
 """
 
 # stdlib
@@ -18,6 +16,8 @@ def geoms(input: 'Name of the files to be converted (dbf, shp)',
     Convert ArcGIS data files into a GeoJSON output
 
     The input files must all have the same name
+
+    Ex: python factory.py geoms resources/precinct_files/May2016Precinct_region.shp
     """
     # Remove the file ext
     input = '.'.join(input.split('.')[:-1])
@@ -59,4 +59,7 @@ def voting(centers: 'Voting centers file path',
 
 @begin.start
 def main():
+    """
+    Command line utility for shaping voting center data
+    """
     pass

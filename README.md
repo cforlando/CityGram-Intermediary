@@ -1,11 +1,9 @@
-# CityGram-Intermediary
-Intermediary API between CityGram and Orlando data sources  
-CityGram - [GitHub - Code for America](https://github.com/codeforamerica/citygram)  
-Orlando Intermediary - [Github - Code for Orlando](https://github.com/cforlando/CityGram-Intermediary)
-
 # Orlando Citygram Resources
 
 This repository contains resources for documenting and constructing data for Orlando's [Citygram](https://citygram.org) services
+
+CityGram - [GitHub - Code for America](https://github.com/codeforamerica/citygram)
+CityGram Services - [GitHub - Code for Orlando fork](https://github.com/cforlando/citygram-services)
 
 ## Voter Notifications
 

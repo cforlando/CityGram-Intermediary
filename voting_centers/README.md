@@ -19,7 +19,13 @@ python factory.py -h
 
 ## Precinct Geometries
 
-Orange County precinct GIS files - [link](http://www.ocfelections.com/PrecinctGISFiles.aspx)
+Creates the geojson file from [Orange County precinct GIS files](http://www.ocfelections.com/PrecinctGISFiles.aspx)
+
+```bash
+python factory.py geoms resources/precinct_files/May2016Precinct_region.shp
+```
+
+The output is a feature collection of polygons. As a sanity check, the [rendered precinct geojson data](https://github.com/cforlando/CityGram-Intermediary/blob/master/voting_centers/data/geometries.geojson) can be viewed on GitHub
 
 ## Election Dates
 
