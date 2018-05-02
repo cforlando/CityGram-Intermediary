@@ -1,3 +1,6 @@
+aiohttp~=3.1
 begins~=0.9
 dbfread~=2.0
 pyshp~=1.2
+shapely~=1.6
+usaddress~=0.5
