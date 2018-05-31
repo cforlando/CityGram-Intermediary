@@ -55,7 +55,10 @@ def extract_center(html: str) -> str:
     """
     soup = BeautifulSoup(html, 'html.parser')
     # 'precinct_id': soup.find(id='cntyPrctLbl').text
-    return soup.find(id='cntyPllLbl').text
+    center = soup.find(id='cntyPllLbl')
+    if center is not None:
+        return center.text
+    return None
 
 def get_form_auth(session: requests.Session) -> dict:
     """
@@ -88,22 +91,26 @@ def get_center(geom: Polygon) -> (str, str):
     """
     Returns the voting center for a precinct Polygon or None if too many tries
     """
-    times = 0
+    center_times = 0
     center = None
     while center is None:
+        point_times = 0
         number, street, zipcode = None, None, None
         while number is None or street is None or zipcode is None:
             coord = point_in_polygon(geom)
             print(coord.y, coord.x)
             number, street, zipcode = coord_to_addr(coord.y, coord.x)
+            point_times += 1
+            if point_times > 100:
+                return None
         addr = number + ' ' + street
         print('Address:', addr, zipcode)
         try:
             center = fetch_center(addr, zipcode)
         except Exception as exc:
             print(exc)
-        times += 1
-        if times > 5:
+        center_times += 1
+        if center_times > 5:
             return None
     print('Center:', center)
     return center
@@ -116,6 +123,7 @@ def make_centers(geoms: [dict]) -> {str}:
     try:
         for geom in geoms:
             pid = geom['properties']['precinct']
+            print('Fetching precinct:', pid)
             center = get_center(shape(geom['geometry']))
             ret[pid] = center
     except requests.exceptions.ConnectionError as exc:
