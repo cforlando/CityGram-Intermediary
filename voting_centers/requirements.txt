@@ -1,6 +1,7 @@
-aiohttp~=3.1
+beautifulsoup4~=4.6
 begins~=0.9
 dbfread~=2.0
 pyshp~=1.2
+requests~=2.18
 shapely~=1.6
 usaddress~=0.5
