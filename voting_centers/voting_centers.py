@@ -6,7 +6,6 @@ We therefore only look up precinct IDs not currently found in the output.
 """
 
 # stdlib
-import json
 import random
 # library
 import requests
@@ -91,28 +90,24 @@ def get_center(geom: Polygon) -> (str, str):
     """
     Returns the voting center for a precinct Polygon or None if too many tries
     """
-    center_times = 0
     center = None
     while center is None:
         point_times = 0
         number, street, zipcode = None, None, None
         while number is None or street is None or zipcode is None:
             coord = point_in_polygon(geom)
-            print(coord.y, coord.x)
+            print(coord.y, coord.x, end='\r')
             number, street, zipcode = coord_to_addr(coord.y, coord.x)
             point_times += 1
             if point_times > 100:
                 return None
         addr = number + ' ' + street
-        print('Address:', addr, zipcode)
+        print('Trying Address:', addr, zipcode)
         try:
             center = fetch_center(addr, zipcode)
         except Exception as exc:
             print(exc)
-        center_times += 1
-        if center_times > 5:
-            return None
-    print('Center:', center)
+    print('Got Center:', center)
     return center
 
 def make_centers(geoms: [dict]) -> {str}:
@@ -123,24 +118,9 @@ def make_centers(geoms: [dict]) -> {str}:
     try:
         for geom in geoms:
             pid = geom['properties']['precinct']
-            print('Fetching precinct:', pid)
+            print('Fetching precinct:', int(pid), '\n')
             center = get_center(shape(geom['geometry']))
             ret[pid] = center
     except requests.exceptions.ConnectionError as exc:
         print('Returning subset after connection error:', exc)
     return ret
-
-def main():
-    """
-    Adds voting centers not currently found in output.json
-    """
-    geoms = json.load(open('data/geometries.geojson'))['features']
-    output = json.load(open('output.json'))
-    print(len(geoms))
-    geoms = [geom for geom in geoms if geom['properties']['precinct'] not in output]
-    print(len(geoms))
-    output.update(make_centers(geoms))
-    json.dump(output, open('output.json', 'w'), indent=4, sort_keys=True)
-
-if __name__ == '__main__':
-    main()
