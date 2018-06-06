@@ -71,14 +71,22 @@ def geoms(input: 'Name of the files to be converted (dbf, shp)',
 @begin.subcommand
 def voting(centers: 'Voting centers file path',
            dates: 'Election dates file path',
-           geoms: 'Geometry file path') -> int:
+           geoms: 'Geometry file path',
+           output: 'Name of the output file' = 'voting') -> int:
     """
     Generate master output from voter center, election date, and precinct geometries data files
 
     The output is placed into a publically-callable place for Citygram to pull from like S3
     """
     centers, dates, geoms = [json.load(open(path)) for path in (centers, dates, geoms)]
-    print(dates)
+    geoms = geoms['features']
+    for i, geom in enumerate(geoms):
+        geoms[i]['properties']['voting_center'] = centers.get(geom['properties']['precinct'])
+    json.dump({
+        'days_out': [0, 1, 3, 7, 14],
+        'elections': dates,
+        'geoms': geoms
+    }, open(output + '.json', 'w'), sort_keys=True)
     return 0
 
 @begin.start
