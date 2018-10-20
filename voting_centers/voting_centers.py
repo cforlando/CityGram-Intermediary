@@ -11,7 +11,7 @@ import random
 import requests
 import usaddress
 from bs4 import BeautifulSoup
-from shapely.geometry import  shape, Point, Polygon
+from shapely.geometry import shape, Point, Polygon
 
 # Used for coord to address lookup
 OSM_URL = 'https://nominatim.openstreetmap.org/reverse.php?format=json&lat={}&lon={}'
